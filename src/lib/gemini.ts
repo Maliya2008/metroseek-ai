@@ -1,13 +1,23 @@
 import { GoogleGenAI } from "@google/genai";
 
-// Initialize Gemini with the environment variable
-// Support both process.env (AI Studio/Node) and import.meta.env (Static Vite)
-const GEMINI_API_KEY = (typeof process !== 'undefined' ? process.env?.GEMINI_API_KEY : null) || 
-                      (import.meta.env?.VITE_GEMINI_API_KEY) || 
-                      "";
+// Helper to get environment variables across different environments (Vite/Node)
+const getEnv = (key: string) => {
+  if (typeof process !== 'undefined' && process.env?.[key]) return process.env[key];
+  if (import.meta.env?.[`VITE_${key}`]) return import.meta.env[`VITE_${key}`];
+  return "";
+};
 
+const GEMINI_API_KEY = getEnv('GEMINI_API_KEY');
+const IMAGE_KEY = getEnv('METROSEEK_IMAGE_KEY') || GEMINI_API_KEY;
+
+// Primary client for general AI tasks
 const genAI = new GoogleGenAI({ 
   apiKey: GEMINI_API_KEY
+});
+
+// Dedicated client for image generation (uses specialized key if provided)
+const imageGenAI = new GoogleGenAI({
+  apiKey: IMAGE_KEY
 });
 
 export const geminiModels = {
@@ -18,8 +28,12 @@ export const geminiModels = {
 };
 
 export async function generateImage(prompt: string) {
+  if (!IMAGE_KEY) {
+    throw new Error("Image generation API key is missing. Please check your environment variables.");
+  }
+
   try {
-    const response = await genAI.models.generateContent({
+    const response = await imageGenAI.models.generateContent({
       model: geminiModels.imageGen,
       contents: [{ parts: [{ text: prompt }] }],
       config: {
