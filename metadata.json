@@ -1,0 +1,14 @@
+{
+  "name": "MetroSeek",
+  "description": "A fully functional AI bot web application featuring image generation, OCR, facial analysis, and math solving with multi-language support (English, Sinhala, Tamil).",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "AI Image Generation",
+    "AI Chatbot",
+    "OCR & Text Extraction",
+    "Facial Analysis",
+    "Math & Geometry Solver"
+  ]
+}
