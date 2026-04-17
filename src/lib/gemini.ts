@@ -28,7 +28,7 @@ const imageGenAI = new GoogleGenAI({
 
 export const geminiModels = {
   general: "gemini-3-flash-preview",
-  imageGen: "gemini-3.1-flash-image-preview",
+  imageGen: "gemini-2.5-flash-image",
   pro: "gemini-3.1-pro-preview",
   chat: "gemini-3-flash-preview"
 };
@@ -36,7 +36,7 @@ export const geminiModels = {
 export async function generateImage(prompt: string) {
   const activeKey = IMAGE_KEY || GEMINI_API_KEY;
   if (!activeKey) {
-    throw new Error("Missing API Key. Please provide GEMINI_API_KEY or VITE_METROSEEK_IMAGE_KEY.");
+    throw new Error("Missing API Key. Please provide GEMINI_API_KEY or VITE_METROSEEK_IMAGE_KEY in your hosting secrets.");
   }
 
   const client = new GoogleGenAI({ apiKey: activeKey });
@@ -47,8 +47,7 @@ export async function generateImage(prompt: string) {
       contents: [{ parts: [{ text: prompt }] }],
       config: {
         imageConfig: {
-          aspectRatio: "1:1",
-          imageSize: "1K"
+          aspectRatio: "1:1"
         }
       }
     });
