@@ -90,7 +90,8 @@ export default function App() {
       const imgUrl = await generateImage(prompt);
       setResult(imgUrl);
     } catch (err) {
-      alert(t.error);
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      alert(`${t.error}\n\nDetails: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
