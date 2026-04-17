@@ -91,7 +91,13 @@ export default function App() {
       setResult(imgUrl);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
-      alert(`${t.error}\n\nDetails: ${errorMessage}`);
+      
+      let friendlyError = errorMessage;
+      if (errorMessage.includes("429") || errorMessage.includes("quota")) {
+        friendlyError = "Quota reached or limit set to 0. This usually means the image generation model is not yet available for your specific API key/region on the Free Tier. Please try again later or check your Google AI Studio quota settings.";
+      }
+      
+      alert(`${t.error}\n\n${friendlyError}`);
     } finally {
       setLoading(false);
     }
