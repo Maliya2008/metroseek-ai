@@ -9,8 +9,8 @@ export default defineConfig(({mode}) => {
     base: './',
     plugins: [react(), tailwindcss()],
     define: {
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.METROSEEK_IMAGE_KEY': JSON.stringify(env.METROSEEK_IMAGE_KEY),
+      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY || env.VITE_GEMINI_API_KEY),
+      'process.env.METROSEEK_IMAGE_KEY': JSON.stringify(env.METROSEEK_IMAGE_KEY || env.VITE_METROSEEK_IMAGE_KEY),
     },
     resolve: {
       alias: {
