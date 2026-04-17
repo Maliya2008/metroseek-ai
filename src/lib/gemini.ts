@@ -2,8 +2,14 @@ import { GoogleGenAI } from "@google/genai";
 
 // Helper to get environment variables across different environments (Vite/Node)
 const getEnv = (key: string) => {
+  // 1. Try process.env (Node/AI Studio)
   if (typeof process !== 'undefined' && process.env?.[key]) return process.env[key];
-  if (import.meta.env?.[`VITE_${key}`]) return import.meta.env[`VITE_${key}`];
+  
+  // 2. Try Vite specific environment variables
+  const viteKey = `VITE_${key}`;
+  // @ts-ignore
+  if (import.meta.env && import.meta.env[viteKey]) return import.meta.env[viteKey];
+  
   return "";
 };
 
@@ -22,23 +28,27 @@ const imageGenAI = new GoogleGenAI({
 
 export const geminiModels = {
   general: "gemini-3-flash-preview",
-  imageGen: "gemini-2.5-flash-image",
+  imageGen: "gemini-3.1-flash-image-preview",
   pro: "gemini-3.1-pro-preview",
   chat: "gemini-3-flash-preview"
 };
 
 export async function generateImage(prompt: string) {
-  if (!IMAGE_KEY) {
-    throw new Error("Image generation API key is missing. Please check your environment variables.");
+  const activeKey = IMAGE_KEY || GEMINI_API_KEY;
+  if (!activeKey) {
+    throw new Error("Missing API Key. Please provide GEMINI_API_KEY or VITE_METROSEEK_IMAGE_KEY.");
   }
 
+  const client = new GoogleGenAI({ apiKey: activeKey });
+
   try {
-    const response = await imageGenAI.models.generateContent({
+    const response = await client.models.generateContent({
       model: geminiModels.imageGen,
       contents: [{ parts: [{ text: prompt }] }],
       config: {
         imageConfig: {
-          aspectRatio: "1:1"
+          aspectRatio: "1:1",
+          imageSize: "1K"
         }
       }
     });
